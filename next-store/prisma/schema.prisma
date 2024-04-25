@@ -1,0 +1,218 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model addresses {
+  address_id     BigInt                 @id @default(autoincrement()) @db.UnsignedBigInt
+  customer_id    BigInt?
+  seller_id      BigInt?
+  full_name      String                 @db.VarChar(255)
+  company_name   String?                @db.VarChar(255)
+  address_line1  String                 @db.VarChar(255)
+  address_line2  String?                @db.VarChar(255)
+  city           String                 @db.VarChar(255)
+  state_province String                 @db.VarChar(100)
+  postal_code    String                 @db.VarChar(20)
+  country_code   String                 @db.VarChar(2)
+  phone_number   String?                @db.VarChar(13)
+  address_type   addresses_address_type
+  is_default     Boolean?               @default(false)
+}
+
+model categories {
+  category_id        Int        @unique(map: "category_id") @default(autoincrement()) @db.UnsignedInt
+  parent_category_id Int?
+  category_name      String     @unique(map: "category_name") @db.VarChar(255)
+  description        String?    @db.Text
+  products           products[]
+}
+
+model coupons {
+  coupon_id            BigInt                 @id @default(autoincrement()) @db.UnsignedBigInt
+  coupon_code          String                 @unique(map: "coupon_code") @db.VarChar(255)
+  discount_type        coupons_discount_type?
+  discount_value       Decimal                @db.Decimal(10, 2)
+  minimum_order_amount Decimal?               @db.Decimal(10, 2)
+  start_date           DateTime               @default(now()) @db.Timestamp(0)
+  end_date             DateTime?              @db.DateTime(0)
+  is_active            Boolean?               @default(true)
+}
+
+model customers {
+  customer_id         BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  user_id             BigInt   @unique(map: "user_id")
+  first_name          String   @db.VarChar(255)
+  last_name           String   @db.VarChar(255)
+  email               String   @unique(map: "email") @db.VarChar(100)
+  phone_number        String?  @db.VarChar(13)
+  shipping_address_id BigInt?
+  billing_address_id  BigInt?
+  is_active           Boolean? @default(true)
+}
+
+model genders {
+  gender_id   BigInt  @id @default(autoincrement())
+  gender_type String  @db.VarChar(10)
+  users       users[]
+}
+
+model images {
+  image_id   BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  product_id BigInt   @db.UnsignedBigInt
+  image_url  String   @db.VarChar(255)
+  products   products @relation(fields: [product_id], references: [product_id], onUpdate: Restrict, map: "images_ibfk_1")
+
+  @@index([product_id], map: "product_id")
+}
+
+model inventory_log {
+  log_id     BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  product_id BigInt
+  quantity   Int
+  action     String   @db.VarChar(255)
+  log_date   DateTime @default(now()) @db.Timestamp(0)
+}
+
+model order_items {
+  order_item_id BigInt  @id @default(autoincrement()) @db.UnsignedBigInt
+  order_id      BigInt
+  product_id    BigInt
+  quantity      Int     @default(1)
+  unit_price    Decimal @db.Decimal(10, 2)
+  total_price   Decimal @db.Decimal(10, 2)
+}
+
+model orders {
+  order_id            BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  customer_id         BigInt?
+  seller_id           BigInt?
+  order_date          DateTime @default(now()) @db.Timestamp(0)
+  total_amount        Decimal  @db.Decimal(10, 2)
+  shipping_address_id BigInt?
+  billing_address_id  BigInt?
+  payment_method_id   BigInt?
+  payment_status      String?  @db.VarChar(255)
+  shipping_status     String?  @db.VarChar(255)
+  order_status        String?  @default("placed") @db.VarChar(255)
+}
+
+model payment_methods {
+  payment_method_id    BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  payment_method_name  String   @unique(map: "payment_method_name") @db.VarChar(255)
+  description          String?  @db.Text
+  payment_processor_id BigInt?
+  is_active            Boolean? @default(true)
+}
+
+model product_size {
+  size_id  Int        @id @default(autoincrement())
+  size     String     @db.VarChar(10)
+  products products[]
+}
+
+model products {
+  product_id          BigInt        @unique(map: "product_id") @default(autoincrement()) @db.UnsignedBigInt
+  seller_id           BigInt
+  product_title       String        @db.Text
+  product_description String?       @db.Text
+  category_id         Int           @db.UnsignedInt
+  brand_name          String?       @db.VarChar(255)
+  price               Decimal       @db.Decimal(10, 2)
+  stock_quantity      Int           @default(0)
+  product_condition   Boolean       @map("product-condition")
+  is_active           Boolean?      @default(true)
+  size_id             Int?
+  images              images[]
+  product_size        product_size? @relation(fields: [size_id], references: [size_id], onDelete: Restrict, onUpdate: Restrict, map: "products_ibfk_1")
+  categories          categories    @relation(fields: [category_id], references: [category_id], onUpdate: Restrict, map: "products_ibfk_2")
+
+  @@index([size_id], map: "size_id")
+  @@index([category_id], map: "category_id")
+}
+
+model reviews {
+  review_id   BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  customer_id BigInt
+  product_id  BigInt?
+  seller_id   BigInt?
+  review_date DateTime @default(now()) @db.Timestamp(0)
+  rating      Decimal  @db.Decimal(2, 1)
+  review_text String?  @db.Text
+  is_approved Boolean? @default(false)
+}
+
+model sellers {
+  seller_id          BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  user_id            BigInt   @unique(map: "user_id")
+  seller_name        String   @db.VarChar(255)
+  seller_description String?  @db.Text
+  shop_name          String?  @db.VarChar(255)
+  tax_id             String?  @db.VarChar(50)
+  store_logo         String?  @db.VarChar(255)
+  store_banner       String?  @db.VarChar(255)
+  contact_email      String   @unique(map: "contact_email") @db.VarChar(100)
+  contact_number     String   @db.VarChar(13)
+  address_id         BigInt
+  payment_method_ids BigInt?
+  return_policy      String?  @db.Text
+  shipping_policy    String?  @db.Text
+  average_rating     Decimal? @default(0.0) @db.Decimal(2, 1)
+  num_of_sales       Int?     @default(0)
+  store_category     BigInt?
+  is_active          Boolean? @default(false)
+  users              users    @relation(fields: [user_id], references: [user_id], onUpdate: Restrict, map: "sellers_ibfk_1")
+}
+
+model shopping_cart {
+  cart_id    BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  user_id    BigInt?
+  session_id String?  @db.VarChar(255)
+  product_id BigInt
+  quantity   Int      @default(1)
+  added_date DateTime @default(now()) @db.Timestamp(0)
+}
+
+model users {
+  user_id           BigInt      @id @default(autoincrement())
+  username          String      @db.VarChar(60)
+  email             String      @unique(map: "email") @db.VarChar(255)
+  password          String      @db.VarChar(255)
+  gender_id         BigInt
+  registration_date DateTime    @default(now()) @db.DateTime(0)
+  last_login_date   DateTime    @default(now()) @db.DateTime(0)
+  is_active         Boolean     @default(true)
+  is_seller         Boolean     @default(false)
+  role              users_role? @default(user)
+  sellers           sellers?
+  genders           genders     @relation(fields: [gender_id], references: [gender_id], onUpdate: Restrict, map: "users_ibfk_1")
+
+  @@index([gender_id], map: "gender_id")
+}
+
+model wishlists {
+  wishlist_id BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  customer_id BigInt
+  product_id  BigInt
+  added_date  DateTime @default(now()) @db.Timestamp(0)
+}
+
+enum coupons_discount_type {
+  percentage
+  fixed_amount
+}
+
+enum users_role {
+  user
+  admin
+  seller
+}
+
+enum addresses_address_type {
+  billing
+  shipping
+}
