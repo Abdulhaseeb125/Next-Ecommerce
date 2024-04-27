@@ -19,7 +19,7 @@ export default function ProductCardHorizontal() {
                         />
                         <div className="flex flex-col justify-between">
                             <div className="">
-                                <h2 className="font-bold text-xl sm:text-2xl">Acme Prism T-Shirt</h2>
+                                <h2 className="font-bold text-xl sm:text-lg">Acme Prism T-Shirt</h2>
                                 <div className="flex items-center gap-2">
                                     <BiStar className="w-5 h-5 fill-primary" />
                                     <BiStar className="w-5 h-5 fill-primary" />

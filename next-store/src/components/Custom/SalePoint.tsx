@@ -52,6 +52,7 @@ export default function SalePoint() {
                 {items.map((i) => (
                     <ProductCardVertical
                         key={i.id}
+                        id={i.id}
                         image_src={i.src}
                         category={i.category}
                         title={i.title}

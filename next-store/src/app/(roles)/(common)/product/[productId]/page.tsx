@@ -5,7 +5,7 @@ import { BiSolidStar, BiSolidStarHalf } from "react-icons/bi";
 
 export default function ProdDetails({ params }: { params: { productID: string } }) {
   const { productId }: any = params;
-  // console.log(productId);
+  console.log(productId);
 
   return (
     <div className="flex flex-col">

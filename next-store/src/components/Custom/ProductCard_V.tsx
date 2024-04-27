@@ -18,6 +18,7 @@ import Image from "next/image";
 // } from "@/components/ui/tooltip";
 
 type ProductCard = {
+    id: number,
     image_src: string
     category: string,
     title: string,
@@ -25,10 +26,10 @@ type ProductCard = {
     extra?: string
 }
 
-export default function ProductCardVertical({ image_src, category, price, title, extra }: ProductCard) {
+export default function ProductCardVertical({ id, image_src, category, price, title, extra }: ProductCard) {
     return (
         <div>
-            <Link href={'#'}>
+            <Link href={`/product?id=${id}`} >
                 <Card
                     className="hover:shadow-md dark:hover:shadow-md dark:hover:shadow-neutral-800 transition-all m-auto max-w-full w-[13.8rem] rounded border  dark:border-neutral-700"
                 >
