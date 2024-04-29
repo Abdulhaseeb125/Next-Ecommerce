@@ -4,7 +4,9 @@
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import "./globals.css";
 import AuthSessionProvider from "@/providers/sessionProvider";
-import { Toaster } from "@/components/ui/toaster"
+import { Toaster } from "@/components/ui/toaster";
+import { Provider } from "react-redux";
+import store from "@/store/store";
 
 export default function RootLayout({
   children,
@@ -13,7 +15,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-
       <body>
         <ThemeProvider
           attribute="class"
@@ -22,12 +23,11 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <AuthSessionProvider>
-            {children}
+            <Provider store={store}>{children}</Provider>
             <Toaster />
           </AuthSessionProvider>
         </ThemeProvider>
       </body>
-
     </html>
   );
 }

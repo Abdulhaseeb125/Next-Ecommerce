@@ -48,7 +48,6 @@ export async function SignUpAction(initialState: any, formData: FormData) {
         username: rawFormData.name,
         email: rawFormData.email,
         password: await bcrypt.hash(rawFormData.password, 10),
-        gender_id: 1,
       },
     });
     return {

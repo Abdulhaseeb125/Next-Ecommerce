@@ -56,9 +56,8 @@ model customers {
 }
 
 model genders {
-  gender_id   BigInt  @id @default(autoincrement())
-  gender_type String  @db.VarChar(10)
-  users       users[]
+  gender_id   BigInt @id @default(autoincrement())
+  gender_type String @db.VarChar(10)
 }
 
 model images {
@@ -182,16 +181,12 @@ model users {
   username          String      @db.VarChar(60)
   email             String      @unique(map: "email") @db.VarChar(255)
   password          String      @db.VarChar(255)
-  gender_id         BigInt
   registration_date DateTime    @default(now()) @db.DateTime(0)
   last_login_date   DateTime    @default(now()) @db.DateTime(0)
   is_active         Boolean     @default(true)
   is_seller         Boolean     @default(false)
   role              users_role? @default(user)
   sellers           sellers?
-  genders           genders     @relation(fields: [gender_id], references: [gender_id], onUpdate: Restrict, map: "users_ibfk_1")
-
-  @@index([gender_id], map: "gender_id")
 }
 
 model wishlists {
