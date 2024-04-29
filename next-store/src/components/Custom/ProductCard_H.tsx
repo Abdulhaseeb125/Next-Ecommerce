@@ -6,7 +6,7 @@ import { Button } from "../ui/button"
 
 export default function ProductCardHorizontal() {
     return (
-        <Link href={`/product/${7}`}>
+        <Link href={`/product/${1}`}>
             <Card>
                 <CardContent className="p-6">
                     <div className="grid gap-4 lg:grid-cols-2 ">

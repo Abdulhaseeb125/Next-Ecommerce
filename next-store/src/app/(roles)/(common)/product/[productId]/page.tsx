@@ -1,11 +1,21 @@
+import axios from "@/Axios";
 import { ProductSlide } from "@/components/Custom/Carousel";
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import { BiSolidStar, BiSolidStarHalf } from "react-icons/bi";
 
-export default function ProdDetails({ params }: { params: { productID: string } }) {
+
+export default async function ProdDetails({ params }: { params: { productID: string } }) {
   const { productId }: any = params;
-  console.log(productId);
+
+  const response = await axios.get("/api/products", { data: { productId: productId } });
+  // console.log(response);
+
+
+
+
+
+
 
   return (
     <div className="flex flex-col">

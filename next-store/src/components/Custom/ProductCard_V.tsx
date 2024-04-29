@@ -29,7 +29,7 @@ type ProductCard = {
 export default function ProductCardVertical({ id, image_src, category, price, title, extra }: ProductCard) {
     return (
         <div>
-            <Link href={`/product?id=${id}`} >
+            <Link href={`/product/${id}`} >
                 <Card
                     className="hover:shadow-md dark:hover:shadow-md dark:hover:shadow-neutral-800 transition-all m-auto max-w-full w-[13.8rem] rounded border  dark:border-neutral-700"
                 >
@@ -65,6 +65,6 @@ export default function ProductCardVertical({ id, image_src, category, price, ti
                     </CardFooter>
                 </Card>
             </Link>
-        </div>
+        </div >
     );
 }
