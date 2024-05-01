@@ -8,18 +8,18 @@ import {
 } from "@/components/ui/carousel"
 import Image from "next/image"
 
-export function ProductSlide() {
+export function ProductSlide({ images }: any) {
     return (
         <Carousel className="w-full max-w-xs">
             <CarouselContent>
-                {Array.from({ length: 5 }).map((_, index) => (
+                {images.map((_: any, index: number) => (
                     <CarouselItem key={index}>
                         <div className="p-1">
                             <Image
                                 alt="Product Image"
                                 className="w-full h-auto rounded-lg"
                                 height={600}
-                                src="/images/products/productsimage_1713171201786_0.5bknmbn65l1e.png"
+                                src={_.image_url}
                                 style={{
                                     aspectRatio: "600/600",
                                     objectFit: "cover",

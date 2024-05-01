@@ -56,8 +56,9 @@ model customers {
 }
 
 model genders {
-  gender_id   BigInt @id @default(autoincrement())
-  gender_type String @db.VarChar(10)
+  gender_id   BigInt  @id @default(autoincrement())
+  gender_type String  @db.VarChar(10)
+  users       users[]
 }
 
 model images {
@@ -115,23 +116,24 @@ model product_size {
 }
 
 model products {
-  product_id          BigInt        @unique(map: "product_id") @default(autoincrement()) @db.UnsignedBigInt
+  product_id          BigInt          @unique(map: "product_id") @default(autoincrement()) @db.UnsignedBigInt
   seller_id           BigInt
-  product_title       String        @db.Text
-  product_description String?       @db.Text
-  category_id         Int           @db.UnsignedInt
-  brand_name          String?       @db.VarChar(255)
-  price               Decimal       @db.Decimal(10, 2)
-  stock_quantity      Int           @default(0)
-  product_condition   Boolean       @map("product-condition")
-  is_active           Boolean?      @default(true)
+  product_title       String          @db.Text
+  product_description String?         @db.Text
+  category_id         Int             @db.UnsignedInt
+  brand_name          String?         @db.VarChar(255)
+  price               Decimal         @db.Decimal(10, 2)
+  stock_quantity      Int             @default(0)
+  product_condition   Boolean         @map("product-condition")
+  is_active           Boolean?        @default(true)
   size_id             Int?
   images              images[]
-  product_size        product_size? @relation(fields: [size_id], references: [size_id], onDelete: Restrict, onUpdate: Restrict, map: "products_ibfk_1")
-  categories          categories    @relation(fields: [category_id], references: [category_id], onUpdate: Restrict, map: "products_ibfk_2")
+  product_size        product_size?   @relation(fields: [size_id], references: [size_id], onDelete: NoAction, onUpdate: NoAction, map: "products_ibfk_1")
+  categories          categories      @relation(fields: [category_id], references: [category_id], onDelete: NoAction, onUpdate: NoAction, map: "products_ibfk_2")
+  shopping_cart       shopping_cart[]
 
-  @@index([size_id], map: "size_id")
-  @@index([category_id], map: "category_id")
+  @@index([size_id], map: "products_ibfk_1")
+  @@index([category_id], map: "products_ibfk_2")
 }
 
 model reviews {
@@ -171,9 +173,12 @@ model shopping_cart {
   cart_id    BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
   user_id    BigInt?
   session_id String?  @db.VarChar(255)
-  product_id BigInt
+  product_id BigInt   @db.UnsignedBigInt
   quantity   Int      @default(1)
   added_date DateTime @default(now()) @db.Timestamp(0)
+  products   products @relation(fields: [product_id], references: [product_id], onUpdate: Restrict, map: "shopping_cart_ibfk_1")
+
+  @@index([product_id], map: "product_id")
 }
 
 model users {
@@ -181,12 +186,16 @@ model users {
   username          String      @db.VarChar(60)
   email             String      @unique(map: "email") @db.VarChar(255)
   password          String      @db.VarChar(255)
+  gender_id         BigInt
   registration_date DateTime    @default(now()) @db.DateTime(0)
   last_login_date   DateTime    @default(now()) @db.DateTime(0)
   is_active         Boolean     @default(true)
   is_seller         Boolean     @default(false)
   role              users_role? @default(user)
   sellers           sellers?
+  genders           genders     @relation(fields: [gender_id], references: [gender_id], onUpdate: Restrict, map: "users_ibfk_1")
+
+  @@index([gender_id], map: "gender_id")
 }
 
 model wishlists {

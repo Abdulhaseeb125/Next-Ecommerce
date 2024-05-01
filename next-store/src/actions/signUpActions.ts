@@ -11,7 +11,7 @@ interface FormData {
 const PASSWORD_CONFIRM_ERROR = "Password did not match";
 const SERVER_ERROR_MESSAGE = "Something went wrong";
 const EMAIL_EXISTS_ERROR = "Email Already Exists";
-const SUCCESS = "User Created Successfully, You can now login"
+const SUCCESS = "User Created Successfully, You can now login";
 export async function SignUpAction(initialState: any, formData: FormData) {
   // *  Extracting form data
   const rawFormData = {
@@ -48,6 +48,7 @@ export async function SignUpAction(initialState: any, formData: FormData) {
         username: rawFormData.name,
         email: rawFormData.email,
         password: await bcrypt.hash(rawFormData.password, 10),
+        gender_id: 0,
       },
     });
     return {

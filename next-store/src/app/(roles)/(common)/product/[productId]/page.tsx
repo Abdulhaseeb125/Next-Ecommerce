@@ -1,20 +1,27 @@
 import axios from "@/Axios";
+import AddToCartButton from "@/components/Buttons/AddToCartButton";
 import { ProductSlide } from "@/components/Custom/Carousel";
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
-import { BiSolidStar, BiSolidStarHalf } from "react-icons/bi";
+import { BiErrorAlt, BiSolidStar, BiSolidStarHalf } from "react-icons/bi";
 
 
 export default async function ProdDetails({ params }: { params: { productID: string } }) {
-  const { productId }: any = params;
+  let product;
+  try {
+    const { productId }: any = params;
+    const response = await axios.get(`/api/products?id=${productId}`);
+    product = JSON.parse(response.data.json);
 
-  const response = await axios.get("/api/products", { data: { productId: productId } });
-  // console.log(response);
-
-
-
-
-
+  } catch (e: any) {
+    console.log(e.message);
+    return (<div className="text-2xl py-10 ">
+      <span className="p-3 border flex gap-2 items-center justify-center bg-destructive">
+        <BiErrorAlt />
+        Something went wrong. Please Try Again
+      </span>
+    </div>)
+  }
 
 
   return (
@@ -22,10 +29,12 @@ export default async function ProdDetails({ params }: { params: { productID: str
       <section className="  py-12 md:py-20">
         <div className="container mx-auto px-4 md:px-6 grid md:grid-cols-2 gap-8 items-center">
           <div className="m-auto">
-            <ProductSlide />
+            <ProductSlide images={product.images} />
           </div>
           <div className="space-y-6 ">
-            <h1 className="text-3xl md:text-4xl font-bold">Acme Wireless Headphones</h1>
+            <h1 className="text-3xl md:text-4xl font-bold">
+              {product.product_title}
+            </h1>
             <div className="flex text-yellow-400" >
               <BiSolidStar size={25} />
               <BiSolidStar size={25} />
@@ -34,10 +43,10 @@ export default async function ProdDetails({ params }: { params: { productID: str
               <BiSolidStarHalf size={25} />
             </div>
             <div className="flex items-center gap-4">
-              <span className="text-3xl font-bold">$99.99</span>
+              <span className="text-3xl font-bold">Rs. {product.price}</span>
             </div>
             <div className="flex gap-4">
-              <Button size="lg">Add to Cart</Button>
+              <AddToCartButton product={product} />
               <Button size="lg" className=" bg-btn hover:bg-btnHover text-white ">Buy Now</Button>
             </div>
           </div>
@@ -50,21 +59,25 @@ export default async function ProdDetails({ params }: { params: { productID: str
               <h2 className="text-2xl md:text-3xl font-bold mb-4">Product Details</h2>
               <ul className="space-y-2 text-gray-500 dark:text-gray-400">
                 <li>
-                  <span className="font-medium text-gray-900 dark:text-gray-100">Connectivity:</span>
-                  Bluetooth 5.0
+                  <span className="font-medium text-gray-900 dark:text-gray-100">Category: </span>
+                  {product.categories.category_name}
                 </li>
                 <li>
-                  <span className="font-medium text-gray-900 dark:text-gray-100">Battery Life:</span>
-                  Up to 20 hours
+                  <span className="font-medium text-gray-900 dark:text-gray-100">Brand: </span>
+                  {product.brand_name}
                 </li>
-                <li>
-                  <span className="font-medium text-gray-900 dark:text-gray-100">Noise Cancellation:</span>
-                  Advanced Noise Cancelling Technology
-                </li>
-                <li>
-                  <span className="font-medium text-gray-900 dark:text-gray-100">Drivers:</span>
-                  40mm Dynamic Drivers
-                </li>
+                {product.categories &&
+                  <li>
+                    <span className="font-medium text-gray-900 dark:text-gray-100">Condition: </span>
+                    {product.product_condition ? "New" : "Used"}
+                  </li>
+                }
+                {product.product_size &&
+                  <li>
+                    <span className="font-medium text-gray-900 dark:text-gray-100">Size: </span>
+                    {product.product_size.size}
+                  </li>
+                }
               </ul>
             </div>
             <div>
@@ -97,8 +110,7 @@ export default async function ProdDetails({ params }: { params: { productID: str
             <div>
               <h2 className="text-2xl md:text-3xl font-bold mb-4">Product Description</h2>
               <p className="text-gray-500 dark:text-gray-400 text-lg">
-                Experience the ultimate in sound quality with our Acme Wireless Headphones. Crafted with premium materials
-                and advanced audio technology, these headphones deliver an immersive listening experience.
+                {product.product_description}
               </p>
             </div>
           </div>
